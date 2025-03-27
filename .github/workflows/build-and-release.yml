@@ -74,9 +74,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Prepare Release
-        run: pnpm prepare:release
-
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1

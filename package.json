@@ -11,8 +11,6 @@
 		"lint:fix": "biome lint --apply .",
 		"typecheck": "pnpm --recursive typecheck",
 		"prepare": "husky && pnpm format",
-		"prepare-changeset": "tsx .scripts/prepare-changeset.ts",
-		"prepare:release": "pnpm prepare-changeset && pnpm version",
 		"release": "pnpm changeset publish",
 		"release:next": "pnpm changeset publish --tag next",
 		"test": "echo \"No tests configured\" || exit 0",
