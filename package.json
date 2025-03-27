@@ -11,7 +11,8 @@
 		"lint:fix": "biome lint --apply .",
 		"typecheck": "pnpm --recursive typecheck",
 		"prepare": "husky && pnpm format",
-		"prepare-changeset": "ts-node scripts/prepare-changeset.ts",
+		"prepare-changeset": "tsx .scripts/prepare-changeset.ts",
+		"prepare:release": "pnpm prepare-changeset && pnpm version",
 		"release": "pnpm changeset publish",
 		"release:next": "pnpm changeset publish --tag next",
 		"version": "pnpm changeset version"
@@ -30,12 +31,13 @@
 		"@tsconfig/node22": "^22.0.1",
 		"@types/node": "^22.13.14",
 		"husky": "^9.1.7",
-		"ts-node": "^10.9.2",
+		"tsx": "^4.19.3",
 		"typescript": "^5.8.2"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
-			"@biomejs/biome"
+			"@biomejs/biome",
+			"esbuild"
 		]
 	}
 }
