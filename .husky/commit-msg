@@ -1,1 +1,6 @@
+if [ -n "$CI" ]; then
+  echo "⏩ Skipping Husky hooks in CI environment."
+  exit 0
+fi
+
 npx --no -- commitlint --edit "$1"
