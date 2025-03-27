@@ -1,0 +1,18 @@
+# <type>(<scope>): <short summary>
+# |__ Type: feat, fix, docs, style, refactor, test, chore, perf, build, ci
+# |__ Scope (optional): module or area affected
+# |__ Concise description in present tense
+
+# Detailed description (optional)
+# Explain why this change is being made
+# Use imperative, present tense: "change" not "changed"
+
+# Breaking changes (if applicable)
+# BREAKING CHANGE: <description>
+
+# Related issues (optional)
+# Refs #123, Closes #456
+
+# Additional context (optional)
+# - Any additional information
+# - Reasoning behind the implementation

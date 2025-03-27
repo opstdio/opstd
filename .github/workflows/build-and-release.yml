@@ -1,0 +1,63 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - next
+      - 'feature/**'
+      - 'hotfix/**'
+      - 'fix/**'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Tests
+        run: pnpm test
+
+      - name: Type Check
+        run: pnpm typecheck
+  release:
+    name: Release
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next'
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: |
+            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+              pnpm release
+            elif [ "${{ github.ref }}" = "refs/heads/next" ]; then
+              pnpm release:next
+            fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
