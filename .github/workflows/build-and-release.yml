@@ -8,24 +8,56 @@ on:
       - 'feature/**'
       - 'hotfix/**'
       - 'fix/**'
+  pull_request:
+    branches:
+      - main
+      - next
 
 
 jobs:
-  build:
+  lint-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
+
+      - name: Lint
+        run: pnpm lint
 
       - name: Run Tests
         run: pnpm test
 
       - name: Type Check
         run: pnpm typecheck
+
+  changeset-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Check Changesets
+        run: npx changeset status
+
   release:
     name: Release
+    needs: [lint-and-test]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next'
 
     runs-on: ubuntu-latest
