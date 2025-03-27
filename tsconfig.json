@@ -1,0 +1,21 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": ["@tsconfig/node22/tsconfig.json"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@opstdio/*": ["packages/*/src"]
+		},
+		"strict": true,
+		"declaration": true,
+		"declarationMap": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true
+	},
+	"files": [],
+	"references": [
+		{ "path": "./packages/*/tsconfig.json" },
+		{ "path": "./apps/*/tsconfig.json" }
+	]
+}
