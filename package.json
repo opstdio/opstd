@@ -15,6 +15,7 @@
 		"prepare:release": "pnpm prepare-changeset && pnpm version",
 		"release": "pnpm changeset publish",
 		"release:next": "pnpm changeset publish --tag next",
+		"test": "echo \"No tests configured\" || exit 0",
 		"version": "pnpm changeset version"
 	},
 	"engines": {
