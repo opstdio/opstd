@@ -1,45 +1,45 @@
-import { execSync } from 'node:child_process';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import { execSync } from "node:child_process";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
-type CommitType = 'major' | 'minor' | 'patch';
+type CommitType = "major" | "minor" | "patch";
 type CommitTypeMap = Record<string, CommitType>;
 
 const COMMIT_TYPE_MAP: CommitTypeMap = {
-	feat: 'minor',
-	fix: 'patch',
-	perf: 'patch',
-	docs: 'patch',
-	refactor: 'patch',
-	test: 'patch',
-	chore: 'patch',
-	build: 'patch',
-	ci: 'patch',
-	breaking: 'major',
+	feat: "minor",
+	fix: "patch",
+	perf: "patch",
+	docs: "patch",
+	refactor: "patch",
+	test: "patch",
+	chore: "patch",
+	build: "patch",
+	ci: "patch",
+	breaking: "major",
 };
 
 function getLastCommitMessage(): string {
 	try {
-		return execSync('git log -1 --pretty=%B').toString().trim();
+		return execSync("git log -1 --pretty=%B").toString().trim();
 	} catch (error) {
-		console.error('Errore nel recuperare il messaggio di commit:', error);
-		return '';
+		console.error("Errore nel recuperare il messaggio di commit:", error);
+		return "";
 	}
 }
 
 function determineChangesetType(commitMessage: string): CommitType {
-	const commitType = commitMessage.split(':')[0].toLowerCase();
+	const commitType = commitMessage.split(":")[0].toLowerCase();
 
 	// Controllo per breaking changes
-	if (commitMessage.includes('BREAKING CHANGE')) {
-		return 'major';
+	if (commitMessage.includes("BREAKING CHANGE")) {
+		return "major";
 	}
 
-	return COMMIT_TYPE_MAP[commitType] ?? 'patch';
+	return COMMIT_TYPE_MAP[commitType] ?? "patch";
 }
 
 function createChangesetDirectory(): void {
-	const changesetDir = path.resolve(process.cwd(), '.changeset');
+	const changesetDir = path.resolve(process.cwd(), ".changeset");
 	if (!fs.existsSync(changesetDir)) {
 		fs.mkdirSync(changesetDir);
 	}
@@ -53,9 +53,13 @@ function writeChangesetFile(type: CommitType, description: string): void {
 	createChangesetDirectory();
 
 	const changesetFileName = generateChangesetFileName();
-	const changesetPath = path.resolve(process.cwd(), '.changeset', changesetFileName);
+	const changesetPath = path.resolve(
+		process.cwd(),
+		".changeset",
+		changesetFileName,
+	);
 
-	const packageName = process.env.npm_package_name ?? 'unnamed-package';
+	const packageName = process.env.npm_package_name ?? "unnamed-package";
 
 	const changesetContent = `---
 "${packageName}": ${type}
@@ -74,7 +78,9 @@ function generate(): void {
 		const lastCommitMessage = getLastCommitMessage();
 
 		if (!lastCommitMessage) {
-			console.log('Nessun messaggio di commit trovato. Salto la generazione del changeset.');
+			console.log(
+				"Nessun messaggio di commit trovato. Salto la generazione del changeset.",
+			);
 			return;
 		}
 
@@ -82,7 +88,7 @@ function generate(): void {
 
 		writeChangesetFile(changesetType, lastCommitMessage);
 	} catch (error) {
-		console.error('Errore nella generazione del changeset:', error);
+		console.error("Errore nella generazione del changeset:", error);
 	}
 }
 
