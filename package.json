@@ -1,6 +1,10 @@
 {
 	"name": "opstdio",
 	"private": "true",
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
