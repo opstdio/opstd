@@ -77,6 +77,15 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+      - name: Create Initial Tag if Not Exists
+        run: |
+          if [ -z "$(git tag)" ]; then
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git tag -a v0.1.0 -m "Initial version"
+            git push origin v0.1.0
+          fi
+
       - name: Generate Changesets from Conventional Commits
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
