@@ -18,7 +18,8 @@
 		"release": "pnpm changeset publish",
 		"release:next": "pnpm changeset publish --tag next",
 		"test": "echo \"No tests configured\" || exit 0",
-		"version": "pnpm changeset version"
+		"version": "pnpm changeset version",
+		"generate-changeset": "generate-changeset"
 	},
 	"engines": {
 		"node": "^22"
@@ -34,6 +35,7 @@
 		"@commitlint/config-conventional": "^19.8.0",
 		"@tsconfig/node22": "^22.0.1",
 		"@types/node": "^22.13.14",
+		"changeset-conventional-commits": "^0.2.5",
 		"husky": "^9.1.7",
 		"tsx": "^4.19.3",
 		"typescript": "^5.8.2"
