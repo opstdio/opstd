@@ -13,5 +13,9 @@
 	"fixed": [],
 	"ignore": [],
 	"linked": [],
-	"updateInternalDependencies": "patch"
+	"updateInternalDependencies": "patch",
+	"privatePackages": {
+		"version": true,
+		"tag": true
+	}
 }
