@@ -78,11 +78,6 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: |
-            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-              pnpm release
-            elif [ "${{ github.ref }}" = "refs/heads/next" ]; then
-              pnpm release:next
-            fi
+          publish: ${{ github.ref == 'refs/heads/main' && 'pnpm release' || (github.ref == 'refs/heads/next' && 'pnpm release:next') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
