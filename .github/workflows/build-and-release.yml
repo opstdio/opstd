@@ -77,6 +77,14 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+      - name: Generate Changesets from Conventional Commits
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            pnpm changeset-conventional -p main
+          elif [ "${{ github.ref }}" == "refs/heads/next" ]; then
+            pnpm changeset-conventional -p main -i next
+          fi
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1

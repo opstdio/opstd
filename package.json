@@ -19,7 +19,7 @@
 		"release:next": "pnpm changeset publish --tag next",
 		"test": "echo \"No tests configured\" || exit 0",
 		"version": "pnpm changeset version",
-		"generate-changeset": "generate-changeset"
+		"generate-changeset": "changeset-conventional -p main -i next\n"
 	},
 	"engines": {
 		"node": "^22"
