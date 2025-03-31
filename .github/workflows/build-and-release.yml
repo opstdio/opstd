@@ -55,7 +55,10 @@ jobs:
     name: Release
     needs: [lint-and-test]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next'
-
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
