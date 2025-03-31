@@ -84,5 +84,7 @@ jobs:
           version: pnpm version
           publish: ${{ github.ref == 'refs/heads/main' && 'pnpm release' || (github.ref == 'refs/heads/next' && 'pnpm release:next') }}
           commit: 'chore(ci): version packages'
+          setupGitUser: true
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
