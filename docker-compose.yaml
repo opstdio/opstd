@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: unless-stopped
+    pull_policy: never
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/home/postgres/pgdata/data
+    networks:
+      - internal
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  postgres_data:

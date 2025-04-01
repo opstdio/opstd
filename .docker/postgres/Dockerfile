@@ -86,6 +86,57 @@ RUN export CURL_CFLAGS="-I/usr/local/include" \
 	 && make \
 	 && make install
 
+FROM postgres:17-bullseye AS pgjwt_builder
+
+RUN apt-get update && \
+	 apt-get remove -y --purge 'libcurl*' || true && \
+	 apt-get autoremove -y && \
+	 apt-get clean
+
+ENV GIT_SSL_NO_VERIFY=1
+
+COPY --from=curl_builder /usr/local/lib/libcurl.so* /usr/local/lib/
+COPY --from=curl_builder /usr/local/include/curl /usr/local/include/curl
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	 build-essential \
+	 postgresql-server-dev-17 \
+	 git \
+	 ca-certificates \
+	 wget
+
+# Clonare e costruire pgjwt
+WORKDIR /tmp/build
+RUN git clone --depth 1 https://github.com/michelp/pgjwt
+
+WORKDIR /tmp/build/pgjwt
+RUN export CURL_CFLAGS="-I/usr/local/include" \
+	 && export CURL_LIBS="-L/usr/local/lib -lcurl" \
+	 && export LIBRARY_PATH=/usr/local/lib \
+	 && export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
+	 && make \
+	 && make install
+
+# Fase di preparazione
+FROM postgres:17-bullseye AS wrappers_builder
+
+# Definisci l'architettura
+ARG TARGETARCH
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    ca-certificates
+
+
+# Scarica il pacchetto corretto in base all'architettura
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        wget https://github.com/supabase/wrappers/releases/download/v0.4.5/wrappers-v0.4.5-pg17-amd64-linux-gnu.deb -O /tmp/wrappers.deb; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        wget https://github.com/supabase/wrappers/releases/download/v0.4.5/wrappers-v0.4.5-pg17-arm64-linux-gnu.deb -O /tmp/wrappers.deb; \
+    else \
+        echo "Unsupported architecture" && exit 1; \
+    fi
+
 FROM postgres:17-bullseye
 LABEL authors="frnwtr"
 
@@ -140,6 +191,11 @@ COPY --from=curl_builder /usr/local/bin/curl /usr/local/bin/curl
 COPY --from=curl_builder /usr/local/lib/libcurl.so* /usr/local/lib/
 COPY --from=pg_net_builder /usr/lib/postgresql/17/lib/pg_net.so /usr/lib/postgresql/17/lib/
 COPY --from=pg_net_builder /usr/share/postgresql/17/extension/pg_net* /usr/share/postgresql/17/extension/
+COPY --from=pgjwt_builder /usr/share/postgresql/17/extension/pgjwt* /usr/share/postgresql/17/extension/
+
+
+COPY --from=wrappers_builder /tmp/wrappers.deb /tmp/wrappers.deb
+RUN dpkg -i /tmp/wrappers.deb || apt-get -f install -y
 
 # Configurazione librerie curl
 RUN \
