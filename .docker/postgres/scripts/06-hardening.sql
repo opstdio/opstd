@@ -1,7 +1,9 @@
+-- Security configurations
+
 -- Disable connections to template1
 REVOKE ALL ON DATABASE template1 FROM PUBLIC;
 
--- Configure logging and monitoring
+-- Logging and monitoring configuration
 ALTER
 SYSTEM SET log_connections = on;
 ALTER
