@@ -9,7 +9,7 @@ import process from "node:process";
 import { hostname } from "node:os";
 import { requestId } from 'hono/request-id';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { db } from "@opstd/db";
+import { db,up } from "@opstd/db";
 import { z, EnvValidator } from "@opstd/env-validator";
 import path from 'node:path';
 
@@ -73,6 +73,7 @@ async function migrateDatabase() {
 		migrationsSchema: 'migrations',
 		migrationsTable: 'auth_migrations'
 	})
+	await up(db);
 	customLogger.info(`Database Migration completed`);
 }
 
