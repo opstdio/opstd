@@ -1,15 +1,14 @@
 {
 	"name": "opstdio",
 	"private": "true",
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
+	"workspaces": ["apps/*", "packages/*"],
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"packageManager": "pnpm@10.4.1",
 	"scripts": {
+		"dev": "dotenv -e .env -- turbo run dev",
+		"build": "dotenv -e .env -- turbo run build",
 		"format": "biome format --write .",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --apply .",
@@ -19,12 +18,16 @@
 		"release:next": "pnpm changeset publish --tag next",
 		"test": "echo \"No tests configured\" || exit 0",
 		"version": "pnpm changeset version",
-		"generate-changeset": "changeset-conventional -p main -i next\n"
+		"generate-changeset": "changeset-conventional -p main -i next",
+		"db:generate": "dotenv -e .env -- turbo run db:generate",
+		"db:migrate": "dotenv -e .env -- turbo run db:migrate",
+		"db:push": "dotenv -e .env -- turbo run db:push"
 	},
 	"engines": {
 		"node": "^22"
 	},
 	"dependencies": {
+		"dotenv": "^16.4.7",
 		"turbo": "^2.4.4"
 	},
 	"devDependencies": {
@@ -36,15 +39,12 @@
 		"@tsconfig/node22": "^22.0.1",
 		"@types/node": "^22.13.14",
 		"changeset-conventional-commits": "^0.2.5",
+		"dotenv-cli": "^8.0.0",
 		"husky": "^9.1.7",
 		"tsx": "^4.19.3",
 		"typescript": "^5.8.2"
 	},
 	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@biomejs/biome",
-			"esbuild",
-			"sharp"
-		]
+		"onlyBuiltDependencies": ["@biomejs/biome", "esbuild", "sharp"]
 	}
 }

@@ -14,6 +14,7 @@ SET row_security = off;
 
 -- Schema creation
 CREATE SCHEMA IF NOT EXISTS auth;
+CREATE SCHEMA IF NOT EXISTS migrations;
 CREATE SCHEMA IF NOT EXISTS extensions;
 CREATE SCHEMA IF NOT EXISTS app_audit;
 CREATE SCHEMA IF NOT EXISTS app_data;

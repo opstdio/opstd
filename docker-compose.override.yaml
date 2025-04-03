@@ -12,6 +12,25 @@ services:
       - postgres_data:/home/postgres/pgdata/data
     networks:
       - internal
+  auth:
+    build:
+      context: ./
+      dockerfile: services/auth/Dockerfile
+    restart: unless-stopped
+
+    env_file:
+      - .env
+    environment:
+      DB_HOST : postgres
+      APP_MODE: production
+    ports:
+      - "4000:4000"
+    networks:
+      - internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 networks:
   internal:
     driver: bridge

@@ -1,6 +1,7 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"globalDependencies": [".env"],
+	"globalEnv": ["APP_NAME", "AUTH_SECRET", "POSTGRES_PASSWORD", "DATABASE_URL"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^lint", "^build"],
@@ -22,6 +23,18 @@
 		"test": {
 			"inputs": ["{src,tests}/**/*.{js,ts,tsx}"],
 			"outputs": ["coverage/**"]
+		},
+		"db:push": {
+			"cache": false,
+			"persistent": true
+		},
+		"db:migrate": {
+			"cache": false,
+			"persistent": true
+		},
+		"db:generate": {
+			"cache": false,
+			"persistent": true
 		}
 	}
 }

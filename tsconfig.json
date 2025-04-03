@@ -3,9 +3,6 @@
 	"extends": ["@tsconfig/node22/tsconfig.json"],
 	"compilerOptions": {
 		"baseUrl": ".",
-		"paths": {
-			"@opstdio/*": ["packages/*/src"]
-		},
 		"strict": true,
 		"declaration": true,
 		"declarationMap": true,
@@ -16,6 +13,7 @@
 	"files": [],
 	"references": [
 		{ "path": "./packages/*/tsconfig.json" },
-		{ "path": "./apps/*/tsconfig.json" }
+		{ "path": "./apps/*/tsconfig.json" },
+		{ "path": "./services/*/tsconfig.json" }
 	]
 }
