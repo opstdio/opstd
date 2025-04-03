@@ -8,6 +8,11 @@
 			"inputs": ["$TURBO_DEFAULT$", ".env"],
 			"outputs": ["dist/**", "build/**", ".next/**", "!.next/cache/**"]
 		},
+		"start": {
+			"dependsOn": ["^lint", "^build"],
+			"inputs": ["$TURBO_DEFAULT$", ".env"],
+			"outputs": ["dist/**", "build/**", ".next/**", "!.next/cache/**"]
+		},
 		"dev": {
 			"cache": false,
 			"persistent": true
@@ -33,6 +38,10 @@
 			"persistent": true
 		},
 		"db:generate": {
+			"cache": false,
+			"persistent": true
+		},
+		"service:dev": {
 			"cache": false,
 			"persistent": true
 		}

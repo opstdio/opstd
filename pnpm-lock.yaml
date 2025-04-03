@@ -57,12 +57,18 @@ importers:
       '@opstd/auth':
         specifier: workspace:*
         version: link:../../services/auth
+      '@opstd/db':
+        specifier: workspace:*
+        version: link:../../services/db
       '@opstd/env-validator':
         specifier: workspace:*
         version: link:../../packages/env-validator
       '@opstd/ui':
         specifier: workspace:*
         version: link:../../packages/studio-ui
+      drizzle-orm:
+        specifier: ^0.41.0
+        version: 0.41.0(@types/pg@8.11.11)(gel@2.0.1)(kysely@0.27.6)(pg@8.14.1)(postgres@3.4.5)
       lucide-react:
         specifier: ^0.475.0
         version: 0.475.0(react@19.0.0)
@@ -78,6 +84,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4

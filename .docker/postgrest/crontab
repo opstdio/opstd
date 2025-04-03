@@ -1,0 +1,2 @@
+# Run update_jwk.sh at midnight
+0 0 */1 * * /app/update_jwk.sh >> /var/log/cron.log 2>&1

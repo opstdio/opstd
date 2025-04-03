@@ -12,19 +12,37 @@ services:
       - postgres_data:/home/postgres/pgdata/data
     networks:
       - internal
+  postgrest:
+    build:
+      context: ./.docker/postgrest
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      PGRST_DB_URI: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-postgres}
+      PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:4000
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_SERVER_PORT: 4000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+    networks:
+      - internal
   auth:
     build:
       context: ./
       dockerfile: services/auth/Dockerfile
     restart: unless-stopped
-
     env_file:
       - .env
     environment:
       DB_HOST : postgres
       APP_MODE: production
     ports:
-      - "4000:4000"
+      - "4001:4001"
     networks:
       - internal
     depends_on:

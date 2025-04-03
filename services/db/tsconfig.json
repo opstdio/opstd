@@ -11,8 +11,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": ".",
 		"paths": {
-			"@opstd/env-validator": ["../../packages/env-validator/src/index.ts"],
-			"@opstd/auth/schema": ["../auth/src/schemas/auth.ts"]
+			"@opstd/env-validator": ["../../packages/env-validator/src/index.ts"]
 		}
 	},
 	"include": ["src/**/*"],

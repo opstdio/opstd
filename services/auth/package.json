@@ -2,13 +2,13 @@
 	"name": "@opstd/auth",
 	"private": "true",
 	"scripts": {
-		"dev": "tsup src/client.ts schemas/auth.ts --watch",
-		"build": "tsup src/index.ts src/client.ts schemas/auth.ts",
-		"start": "node dist/index.js",
+		"dev": "tsup src/client.ts schemas/auth.ts --watch --outDir dist",
+		"build": "tsup src/index.ts src/client.ts schemas/auth.ts --outDir dist",
+		"service:dev": "tsx src/index.ts",
+		"start": "node dist/src/index.js",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:push": "drizzle-kit push",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"db:push": "drizzle-kit push"
 	},
 	"keywords": [],
 	"author": "",
@@ -36,7 +36,7 @@
 		"typescript": "^5.8.2"
 	},
 	"exports": {
-		"./schema": "./dist/auth.js",
+		"./schema": "./dist/schemas/auth.js",
 		"./client": "./dist/client.js",
 		".": "./dist/index.js"
 	}

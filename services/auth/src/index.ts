@@ -17,7 +17,7 @@ dotenv.config();
 
 const envValidator = new EnvValidator(
 	z.object({
-		PORT: z.coerce.number().default(4000),
+		PORT: z.coerce.number().default(4001),
 	}),
 );
 envValidator.validate();
@@ -66,10 +66,10 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 
 async function migrateDatabase() {
 	await migrate(db, {
-		migrationsFolder: path.resolve(__dirname, "../drizzle"),
+		migrationsFolder: path.resolve(process.cwd(), "drizzle"),
 		migrationsSchema: "migrations",
 		migrationsTable: "auth_migrations",
-	});
+	})
 	await up(db);
 	customLogger.info(`Database Migration completed`);
 }
