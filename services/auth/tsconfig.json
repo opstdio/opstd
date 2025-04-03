@@ -21,7 +21,6 @@
 		"forceConsistentCasingInFileNames": true,
 		"paths": {
 			"@opstd/env-validator": ["../../packages/env-validator/src/index.ts"]
-
 		}
 	},
 	"include": ["src/**/*"],

@@ -7,18 +7,19 @@ import { auth } from "./auth";
 import dotenv from "dotenv";
 import process from "node:process";
 import { hostname } from "node:os";
-import { requestId } from 'hono/request-id';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { db,up } from "@opstd/db";
+import { requestId } from "hono/request-id";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { db, up } from "@opstd/db";
 import { z, EnvValidator } from "@opstd/env-validator";
-import path from 'node:path';
-
+import path from "node:path";
 
 dotenv.config();
 
-const envValidator = new EnvValidator(z.object({
-	PORT: z.coerce.number().default(4000),
-}));
+const envValidator = new EnvValidator(
+	z.object({
+		PORT: z.coerce.number().default(4000),
+	}),
+);
 envValidator.validate();
 
 const customLogger = createLogger({
@@ -44,9 +45,9 @@ app.use(
 		credentials: true,
 	}),
 );
-app.use(requestId())
+app.use(requestId());
 app.use(pinoLogger(customLogger));
-app.get("/health",(c)=>{
+app.get("/health", (c) => {
 	return c.json({
 		status: true,
 		service: "auth-service",
@@ -59,32 +60,29 @@ app.get("/health",(c)=>{
 		port: envValidator.env.PORT,
 	});
 });
-app.on(["POST", "GET"],  "/api/auth/*", (c) => {
+app.on(["POST", "GET"], "/api/auth/*", (c) => {
 	return auth.handler(c.req.raw);
 });
 
-
-
-
-
 async function migrateDatabase() {
 	await migrate(db, {
-		migrationsFolder: path.resolve(__dirname, '../drizzle'),
-		migrationsSchema: 'migrations',
-		migrationsTable: 'auth_migrations'
-	})
+		migrationsFolder: path.resolve(__dirname, "../drizzle"),
+		migrationsSchema: "migrations",
+		migrationsTable: "auth_migrations",
+	});
 	await up(db);
 	customLogger.info(`Database Migration completed`);
 }
 
-migrateDatabase().catch((error) => {
-	customLogger.error(`Database Migration error`, error);
-	process.exit(1);
-}).finally(()=> {
-	serve({
-		fetch: app.fetch,
-		port: envValidator.env.PORT,
+migrateDatabase()
+	.catch((error) => {
+		customLogger.error(`Database Migration error`, error);
+		process.exit(1);
+	})
+	.finally(() => {
+		serve({
+			fetch: app.fetch,
+			port: envValidator.env.PORT,
+		});
+		customLogger.debug(`Running on port ${envValidator.env.PORT}`);
 	});
-	customLogger.debug(`Running on port ${envValidator.env.PORT}`);
-});
-

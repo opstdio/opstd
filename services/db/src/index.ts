@@ -1,10 +1,11 @@
-import {drizzle, NodePgDatabase} from "drizzle-orm/node-postgres";
+import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import pg from "pg";
 const { Pool } = pg;
 import { DatabaseSchema, EnvValidator, z } from "@opstd/env-validator";
-import {sql} from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 const envValidator = new EnvValidator(DatabaseSchema.innerType());
+envValidator.validate();
 
 const dbEnv = DatabaseSchema.parse(envValidator.env);
 
@@ -13,7 +14,7 @@ const pool = new Pool({
 });
 
 export const db = drizzle(pool, {
-	logger: true,
+	logger: envValidator.env.APP_MODE !== "production",
 });
 
 export async function up(db: NodePgDatabase): Promise<void> {

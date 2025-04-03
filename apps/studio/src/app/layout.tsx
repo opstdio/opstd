@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { Geist, Geist_Mono } from "next/font/google"
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
+import "@opstd/ui/globals.css"
+import { Providers } from "@/components/providers"
 
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
+const fontSans = Geist({
 	subsets: ["latin"],
-});
+	variable: "--font-sans",
+})
+
+const fontMono = Geist_Mono({
+	subsets: ["latin"],
+	variable: "--font-mono",
+})
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -18,13 +20,17 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-	children,
-}: Readonly<{
-	children: React.ReactNode;
+																		 children,
+																	 }: Readonly<{
+	children: React.ReactNode
 }>) {
 	return (
-		<html lang="en">
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+		<html lang="en" suppressHydrationWarning>
+		<body
+			className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+		>
+		<Providers>{children}</Providers>
+		</body>
 		</html>
-	);
+	)
 }

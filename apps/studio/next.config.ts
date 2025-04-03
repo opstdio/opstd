@@ -7,7 +7,7 @@ const envValidator = new EnvValidator(z.object({}), {
 
 envValidator.validate();
 const nextConfig: NextConfig = {
-	/* config options here */
+	transpilePackages: ["@opstd/ui"],
 };
 
 export default nextConfig;
