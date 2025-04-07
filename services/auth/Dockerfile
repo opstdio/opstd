@@ -22,7 +22,6 @@ FROM base AS builder
 WORKDIR /app
 
 # Copy lockfile and package.json's of isolated subworkspace
-COPY --from=pruner /app/tsconfig.json ./tsconfig.json
 COPY --from=pruner /app/.config/biome.json ./.config/biome.json
 COPY --from=pruner /app/.gitignore ./.gitignore
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
