@@ -13,10 +13,10 @@ const pool = new Pool({
 	connectionString: dbEnv.DATABASE_URL,
 });
 
-export const db:NodePgDatabase = drizzle(pool, {
+export const db: NodePgDatabase = drizzle(pool, {
 	logger: envValidator.env.APP_MODE !== "production",
 });
 
 export async function up(db: NodePgDatabase): Promise<void> {
-	await db.execute(sql`SELECT add_moddatetime_triggers();`);
+	await db.execute(sql`SELECT extensions.add_moddatetime_triggers();`);
 }

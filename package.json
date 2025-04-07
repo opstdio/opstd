@@ -1,6 +1,6 @@
 {
 	"name": "opstdio",
-	"private": "true",
+	"private": true,
 	"workspaces": ["apps/*", "packages/*"],
 	"keywords": [],
 	"author": "",
@@ -38,7 +38,7 @@
 		"@changesets/cli": "^2.28.1",
 		"@commitlint/cli": "^19.8.0",
 		"@commitlint/config-conventional": "^19.8.0",
-		"@tsconfig/node22": "^22.0.1",
+		"@opstd/tsconfig": "workspace:*",
 		"@types/node": "^22.13.14",
 		"changeset-conventional-commits": "^0.2.5",
 		"dotenv-cli": "^8.0.0",

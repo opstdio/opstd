@@ -1,19 +1,10 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"extends": "../../tsconfig.json",
+	"extends": ["@opstd/tsconfig/base.json"],
 	"compilerOptions": {
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"target": "ES2022",
-		"esModuleInterop": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"baseUrl": ".",
 		"paths": {
 			"@opstd/env-validator": ["../../packages/env-validator/src/index.ts"]
 		}
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules"]
+	"include": ["src/**/*"]
 }

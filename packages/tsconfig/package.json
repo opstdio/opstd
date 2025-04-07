@@ -1,0 +1,15 @@
+{
+	"name": "@opstd/tsconfig",
+	"version": "0.1.0",
+	"private": true,
+	"packageManager": "pnpm@10.4.1",
+	"devDependencies": {
+		"@tsconfig/next": "^2.0.3",
+		"@tsconfig/node22": "^22.0.1"
+	},
+	"files": [
+		"base.json",
+		"nextjs.json",
+		"react-library.json"
+	]
+}

@@ -30,9 +30,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^19.8.0
         version: 19.8.0
-      '@tsconfig/node22':
-        specifier: ^22.0.1
-        version: 22.0.1
+      '@opstd/tsconfig':
+        specifier: workspace:*
+        version: link:packages/tsconfig
       '@types/node':
         specifier: ^22.13.14
         version: 22.13.14
@@ -88,6 +88,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@opstd/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.0.17
@@ -119,6 +122,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@opstd/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
       '@types/node':
         specifier: ^22.0.0
         version: 22.13.14
@@ -144,6 +150,9 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
     devDependencies:
+      '@opstd/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
       '@types/node':
         specifier: ^22.0.0
         version: 22.13.14
@@ -190,6 +199,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@opstd/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
       '@tailwindcss/postcss':
         specifier: ^4.0.8
         version: 4.0.17
@@ -211,6 +223,15 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.8.2
+
+  packages/tsconfig:
+    devDependencies:
+      '@tsconfig/next':
+        specifier: ^2.0.3
+        version: 2.0.3
+      '@tsconfig/node22':
+        specifier: ^22.0.1
+        version: 22.0.1
 
   services/auth:
     dependencies:
@@ -245,6 +266,9 @@ importers:
         specifier: ^8.14.1
         version: 8.14.1
     devDependencies:
+      '@opstd/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       '@types/node':
         specifier: ^22.0.0
         version: 22.13.14
@@ -279,6 +303,9 @@ importers:
         specifier: ^8.14.1
         version: 8.14.1
     devDependencies:
+      '@opstd/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       '@types/node':
         specifier: ^22.13.14
         version: 22.13.14
@@ -1437,6 +1464,9 @@ packages:
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
+
+  '@tsconfig/next@2.0.3':
+    resolution: {integrity: sha512-b4aKvmdWnv9aUy+NStUFlefirk3SItW20OJtbi5/ue9oMRaQtUYbN5zsr7OmV3rlx6Gp6h7A82gPoCXhrNGVPQ==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -4614,6 +4644,8 @@ snapshots:
       tailwindcss: 4.0.17
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
+
+  '@tsconfig/next@2.0.3': {}
 
   '@tsconfig/node10@1.0.11': {}
 

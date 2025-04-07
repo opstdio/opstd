@@ -1,4 +1,21 @@
 services:
+  traefik:
+    image: "traefik:v3.3"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - internal
+
   postgres:
     build:
       context: ./.docker/postgres
@@ -24,11 +41,19 @@ services:
       PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:4000
       PGRST_DB_ANON_ROLE: anon
       PGRST_SERVER_PORT: 4000
+      PGRST_JWT_SECRET: "@/app/jwk.pub"
     depends_on:
       postgres:
         condition: service_healthy
       auth:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.postgrest.rule=PathPrefix(`/api/rest`)"
+      - "traefik.http.routers.postgrest.entrypoints=web"
+      - "traefik.http.routers.postgrest.middlewares=postgrest-stripprefix"
+      - "traefik.http.middlewares.postgrest-stripprefix.stripprefix.prefixes=/api/rest"
+      - "traefik.http.services.postgrest.loadbalancer.server.port=4000"
     networks:
       - internal
   auth:
@@ -43,6 +68,11 @@ services:
       APP_MODE: production
     ports:
       - "4001:4001"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/api/auth`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+      - "traefik.http.services.auth.loadbalancer.server.port=4001"
     networks:
       - internal
     depends_on:

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Fetch the public JWK
-curl $JWK_URL > /app/jwk.pub
+curl http://auth:4001/api/auth/jwks > /app/jwk.pub
 
 # Ask PostgREST to reload config
 # Fails during Docker build because PostgREST isn't running yet

@@ -26,7 +26,7 @@ EXTENSION IF NOT EXISTS pgjwt WITH SCHEMA extensions CASCADE;
 END IF;
 END $$;
 
-CREATE OR REPLACE FUNCTION add_moddatetime_triggers()
+CREATE OR REPLACE FUNCTION extensions.add_moddatetime_triggers()
 	RETURNS void AS $$
 DECLARE
 	r RECORD;
@@ -35,7 +35,7 @@ DECLARE
 BEGIN
 	-- Attempt to create moddatetime extension
 	BEGIN
-		CREATE EXTENSION IF NOT EXISTS "moddatetime";
+		CREATE EXTENSION IF NOT EXISTS "moddatetime" WITH SCHEMA extensions CASCADE;
 	EXCEPTION
 		WHEN DUPLICATE_OBJECT THEN
         -- The extension exist do nothing

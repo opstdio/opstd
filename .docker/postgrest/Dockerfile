@@ -12,8 +12,12 @@ RUN chmod +x /app/update_jwk.sh
 COPY crontab /etc/cron.d/update_jwk
 RUN chmod 0644 /etc/cron.d/update_jwk
 
-# Apply the cron job
-RUN crontab /etc/cron.d/update_jwk
+# Create an entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# Get the current JWK
-RUN ./app/update_jwk.sh
+# Remove crontab configurations
+# CMD now replaces crontab approach
+
+# Use the new entrypoint
+ENTRYPOINT ["/entrypoint.sh"]

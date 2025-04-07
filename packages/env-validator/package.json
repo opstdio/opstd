@@ -1,16 +1,16 @@
 {
 	"name": "@opstd/env-validator",
 	"version": "1.0.0",
-	"private": "true",
+	"private": true,
 	"type": "module",
-	"main": "./dist/index.js",
+	"main": "./dist/index.cjs",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
-			"require": "./dist/index.js"
+			"require": "./dist/index.cjs"
 		}
 	},
 	"scripts": {
@@ -29,13 +29,14 @@
 		"@opstd/logger": "workspace:*"
 	},
 	"devDependencies": {
+		"@opstd/tsconfig": "workspace:*",
 		"@types/node": "^22.0.0",
 		"tsup": "^8.4.0",
 		"tsx": "^4.19.3",
 		"typescript": "^5.8.2"
 	},
 	"tsup": {
-		"entry": ["src/index.ts"],
+		"entry": ["src/index.ts", "src/config.ts"],
 		"format": ["esm", "cjs"],
 		"dts": true,
 		"clean": true

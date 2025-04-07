@@ -69,7 +69,7 @@ async function migrateDatabase() {
 		migrationsFolder: path.resolve(process.cwd(), "drizzle"),
 		migrationsSchema: "migrations",
 		migrationsTable: "auth_migrations",
-	})
+	});
 	await up(db);
 	customLogger.info(`Database Migration completed`);
 }
