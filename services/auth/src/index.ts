@@ -71,12 +71,12 @@ async function migrateDatabase() {
 		migrationsTable: "auth_migrations",
 	});
 	await up(db);
-	customLogger.info(`Database Migration completed`);
+	customLogger.info("Database Migration completed");
 }
 
 migrateDatabase()
 	.catch((error) => {
-		customLogger.error(`Database Migration error`, error);
+		customLogger.error("Database Migration error", error);
 		process.exit(1);
 	})
 	.finally(() => {

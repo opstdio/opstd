@@ -2,6 +2,10 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": ["@opstd/tsconfig/base.json"],
 	"compilerOptions": {
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"strict": true,
+		"allowSyntheticDefaultImports": true,
 		"paths": {
 			"@opstd/env-validator": ["../../packages/env-validator/src/index.ts"]
 		}
