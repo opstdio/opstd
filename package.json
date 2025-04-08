@@ -1,10 +1,7 @@
 {
 	"name": "opstdio",
 	"private": true,
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
+	"workspaces": ["apps/*", "packages/*"],
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
@@ -19,7 +16,7 @@
 		"prepare": "husky && pnpm format",
 		"release": "pnpm changeset publish",
 		"release:next": "pnpm changeset publish --tag next",
-		"test": "echo \"No tests configured\" || exit 0",
+		"test": "NODE_ENV=test turbo run test",
 		"version": "pnpm changeset version",
 		"generate-changeset": "changeset-conventional -p main -i next",
 		"service:dev": "dotenv -e .env -- turbo run service:dev",
@@ -50,12 +47,6 @@
 		"typescript": "^5.8.2"
 	},
 	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@biomejs/biome",
-			"core-js",
-			"core-js-pure",
-			"esbuild",
-			"sharp"
-		]
+		"onlyBuiltDependencies": ["@biomejs/biome", "core-js", "core-js-pure", "esbuild", "sharp"]
 	}
 }

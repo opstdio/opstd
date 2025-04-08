@@ -14,6 +14,7 @@ OPSTD.io is a modern, modular monorepo built with TypeScript, Next.js, and a rob
 - **Linting & Formatting**: Biome
 - **Environment Validation**: Custom env-validator package
 - **Logging**: Custom logger package
+- **Testing**: Vitest
 
 ## Project Structure
 
@@ -75,6 +76,34 @@ OPSTD.io is a modern, modular monorepo built with TypeScript, Next.js, and a rob
   pnpm typecheck
   ```
 
+### Testing
+
+- Run all tests:
+  ```bash
+  pnpm test
+  ```
+
+- Run tests with coverage:
+  ```bash
+  pnpm test:coverage
+  ```
+
+#### Package-Specific Testing
+
+Each package has its own test suite:
+
+- **env-validator**: Tests environment variable validation
+  - Covers default environment variables
+  - Supports custom environment schemas
+  - Handles different app modes
+  - Validates service-specific prefixes
+
+- **logger**: Tests logging utility
+  - Validates logger creation
+  - Checks log level configuration
+  - Verifies transport options
+  - Ensures service metadata inclusion
+
 ### Database Operations
 
 - Generate database schema:
@@ -112,6 +141,7 @@ The project uses a custom `env-validator` package for robust environment configu
 2. Create a feature branch
 3. Commit changes using conventional commits
 4. Push and create a pull request
+5. Ensure all tests pass before submitting
 
 ## License
 
