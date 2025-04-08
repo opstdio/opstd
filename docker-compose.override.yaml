@@ -2,21 +2,18 @@ services:
   traefik:
     image: "traefik:v3.3"
     container_name: "traefik"
-    command:
-      #- "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entryPoints.web.address=:80"
     ports:
       - "80:80"
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/etc/traefik/traefik.yml:ro"
+
     networks:
       - internal
 
   postgres:
+    container_name: "postgres"
     build:
       context: ./.docker/postgres
       dockerfile: Dockerfile
@@ -30,6 +27,7 @@ services:
     networks:
       - internal
   postgrest:
+    container_name: "postgrest"
     build:
       context: ./.docker/postgrest
       dockerfile: Dockerfile
@@ -38,7 +36,7 @@ services:
       - "4000:4000"
     environment:
       PGRST_DB_URI: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-postgres}
-      PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:4000
+      PGRST_OPENAPI_SERVER_PROXY_URI: http://localhost/api/rest
       PGRST_DB_ANON_ROLE: anon
       PGRST_SERVER_PORT: 4000
       PGRST_JWT_SECRET: "@/app/jwk.pub"
@@ -49,14 +47,18 @@ services:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
+      # Inoltra richieste da /api/rest/* a / del servizio postgrest
       - "traefik.http.routers.postgrest.rule=PathPrefix(`/api/rest`)"
       - "traefik.http.routers.postgrest.entrypoints=web"
-      - "traefik.http.routers.postgrest.middlewares=postgrest-stripprefix"
+      # Middleware per rimuovere il prefisso /api/rest prima di inoltrare
       - "traefik.http.middlewares.postgrest-stripprefix.stripprefix.prefixes=/api/rest"
+      - "traefik.http.routers.postgrest.middlewares=postgrest-stripprefix"
       - "traefik.http.services.postgrest.loadbalancer.server.port=4000"
+
     networks:
       - internal
   auth:
+    container_name: "auth"
     build:
       context: ./
       dockerfile: services/auth/Dockerfile

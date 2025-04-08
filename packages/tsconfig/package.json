@@ -7,9 +7,5 @@
 		"@tsconfig/next": "^2.0.3",
 		"@tsconfig/node22": "^22.0.1"
 	},
-	"files": [
-		"base.json",
-		"nextjs.json",
-		"react-library.json"
-	]
+	"files": ["base.json", "nextjs.json", "react-library.json"]
 }

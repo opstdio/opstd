@@ -7,10 +7,15 @@ import { z, EnvValidator } from "@opstd/env-validator";
 const betterAuthSchema = z.object({
 	ALLOWED_ORIGINS: z.string().optional(),
 	BETTER_AUTH_URL: z.string().url().optional(),
+	API_URL: z.string().url().optional(),
 });
 
 const envValidator = new EnvValidator(betterAuthSchema);
 envValidator.validate();
+
+interface AuthApiInterface {
+	generateOpenAPISchema(): Promise<object>;
+}
 
 import {
 	admin,
@@ -24,11 +29,10 @@ import {
 	twoFactor,
 } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
-import { emailHarmony } from "better-auth-harmony";
-import { legalConsent } from "@better-auth-kit/legal-consent";
 import process from "node:process";
 export const auth = betterAuth<BetterAuthOptions>({
 	appName: envValidator.env.APP_NAME,
+	baseURL: envValidator.env.API_URL ?? envValidator.env.BETTER_AUTH_URL,
 	basePath: "/api/auth",
 	emailAndPassword: {
 		enabled: true,
@@ -53,7 +57,9 @@ export const auth = betterAuth<BetterAuthOptions>({
 		}),
 		bearer(),
 		multiSession(),
-		openAPI(),
+		openAPI({
+			disableDefaultReference: true,
+		}),
 		jwt(),
 		passkey(),
 		twoFactor(),
@@ -74,4 +80,6 @@ export const auth = betterAuth<BetterAuthOptions>({
 			secure: process.env.NODE_ENV === "production",
 		},
 	},
-} as BetterAuthOptions) as ReturnType<typeof betterAuth>;
+} as BetterAuthOptions) as ReturnType<typeof betterAuth> & {
+	api: AuthApiInterface;
+};

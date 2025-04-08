@@ -1,23 +1,17 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": [
-    "@opstd/tsconfig/nextjs.json"
-  ],
-  "compilerOptions": {
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@opstd/ui/*": [
-        "../../packages/studio-ui/src/*"
-      ]
-    }
-  },
-  "include": [
-    "../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/next-env.d.ts",
-    "../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/**/*.ts",
-    "../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/**/*.tsx",
-    "../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/.next/types/**/*.ts",
-    ".next/types/**/*.ts"
-  ]
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": ["@opstd/tsconfig/nextjs.json"],
+	"compilerOptions": {
+		"paths": {
+			"@/*": ["./src/*"],
+			"@opstd/ui/*": ["../../packages/studio-ui/src/*"]
+		}
+	},
+	"include": [
+		"../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/next-env.d.ts",
+		"../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/**/*.ts",
+		"../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/**/*.tsx",
+		"../../packages/tsconfig/../../node_modules/.pnpm/@tsconfig+next@2.0.3/node_modules/@tsconfig/next/.next/types/**/*.ts",
+		".next/types/**/*.ts"
+	]
 }

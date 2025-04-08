@@ -15,6 +15,7 @@ import path from "node:path";
 
 dotenv.config();
 
+
 const envValidator = new EnvValidator(
 	z.object({
 		PORT: z.coerce.number().default(4001),
@@ -39,7 +40,11 @@ const app = new Hono<{
 app.use(
 	"*",
 	cors({
-		origin: process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:3000"],
+		origin: process.env.ALLOWED_ORIGINS?.split(",") || [
+			"http://localhost:3000",
+			"http://localhost:4000",
+			"http://localhost",
+		],
 		allowHeaders: ["Content-Type", "Authorization"],
 		allowMethods: ["POST", "GET", "OPTIONS"],
 		credentials: true,
@@ -60,7 +65,12 @@ app.get("/health", (c) => {
 		port: envValidator.env.PORT,
 	});
 });
-app.on(["POST", "GET"], "/api/auth/*", (c) => {
+app.on(["POST", "GET"], "/api/auth/*", async (c) => {
+	if (c.req.path === "/api/auth") {
+		const openAPISchema = await auth.api.generateOpenAPISchema();
+		return c.json(openAPISchema);
+	}
+
 	return auth.handler(c.req.raw);
 });
 
