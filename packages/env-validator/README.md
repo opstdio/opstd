@@ -94,9 +94,90 @@ Supported modes:
 - `test`
 - `staging`
 
-## Error Handling
+## Real-World Examples
 
-The validator will exit the process by default on validation errors. You can provide a custom error handler to implement different error handling strategies.
+### Service-Specific Configuration
+
+```typescript
+// auth-service.ts
+const authSchema = z.object({
+  AUTH_SECRET: z.string().min(32),
+  AUTH_EXPIRES_IN: z.string().regex(/^\d+[hdwm]$/),
+  AUTH_COOKIE_NAME: z.string(),
+  AUTH_SERVICE_PORT: z.coerce.number().min(1000)
+});
+
+const authEnv = new EnvValidator(authSchema, {
+  servicePrefix: 'AUTH_',
+  debug: process.env.NODE_ENV === 'development'
+});
+
+// Now you have type-safe access to AUTH_* variables
+const { AUTH_SECRET, AUTH_EXPIRES_IN } = authEnv.env;
+```
+
+### Multiple Environment Files
+
+```typescript
+// Load different .env files based on environment
+const envValidator = new EnvValidator(schema, {
+  envPath: process.env.NODE_ENV === 'test' 
+    ? '.env.test'
+    : '.env'
+});
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Missing Required Variables**
+   ```typescript
+   // Problem: Required variables not defined
+   const schema = z.object({
+     API_KEY: z.string()
+   });
+   // Solution: Provide default values
+   const schema = z.object({
+     API_KEY: z.string().default('development-key')
+   });
+   ```
+
+2. **Invalid Variable Types**
+   ```typescript
+   // Problem: Number stored as string
+   PORT=3000
+   // Solution: Use coerce
+   const schema = z.object({
+     PORT: z.coerce.number()
+   });
+   ```
+
+3. **Prefix Conflicts**
+   ```typescript
+   // Problem: Multiple services using same prefix
+   AUTH_PORT=3000
+   AUTH_API_PORT=3001
+   // Solution: Use unique prefixes
+   const authEnv = new EnvValidator(schema, {
+     servicePrefix: 'AUTH_API_'
+   });
+   ```
+
+### Debug Mode
+
+Enable debug mode to get detailed validation errors:
+
+```typescript
+const envValidator = new EnvValidator(schema, {
+  debug: true,
+  onValidationError: (error) => {
+    console.error('Validation failed:', error.errors);
+    // Log additional context if needed
+    console.error('Current env:', process.env);
+  }
+});
+```
 
 ## Contributing
 
