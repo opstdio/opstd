@@ -1,13 +1,18 @@
 {
-	"$schema": "https://json.schemastore.org/tsconfig",
-	"extends": ["@opstd/tsconfig/base.json"],
+	"extends": "@opstd/tsconfig/base.json",
 	"compilerOptions": {
 		"outDir": "./dist",
+		"rootDir": "./src",
 		"module": "ESNext",
-		"moduleResolution": "node",
-		"allowImportingTsExtensions": true,
-		"allowJs": true,
-		"resolveJsonModule": true
+		"moduleResolution": "Bundler",
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true
 	},
-	"include": ["src/**/*"]
+	"include": ["src/**/*", "src/**/*.test.ts"],
+	"exclude": ["node_modules", "dist"]
 }

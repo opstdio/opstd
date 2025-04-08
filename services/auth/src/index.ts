@@ -15,7 +15,6 @@ import path from "node:path";
 
 dotenv.config();
 
-
 const envValidator = new EnvValidator(
 	z.object({
 		PORT: z.coerce.number().default(4001),

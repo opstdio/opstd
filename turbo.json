@@ -1,7 +1,7 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"globalDependencies": [".env"],
-	"globalEnv": ["APP_NAME", "AUTH_SECRET", "POSTGRES_PASSWORD", "DATABASE_URL","API_URL"],
+	"globalEnv": ["APP_NAME", "AUTH_SECRET", "POSTGRES_PASSWORD", "DATABASE_URL", "API_URL"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^lint", "^build"],

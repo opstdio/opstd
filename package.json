@@ -1,7 +1,10 @@
 {
 	"name": "opstdio",
 	"private": true,
-	"workspaces": ["apps/*", "packages/*"],
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
@@ -47,6 +50,12 @@
 		"typescript": "^5.8.2"
 	},
 	"pnpm": {
-		"onlyBuiltDependencies": ["@biomejs/biome", "core-js-pure", "esbuild", "sharp"]
+		"onlyBuiltDependencies": [
+			"@biomejs/biome",
+			"core-js",
+			"core-js-pure",
+			"esbuild",
+			"sharp"
+		]
 	}
 }

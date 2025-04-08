@@ -34,6 +34,11 @@ type EnvValidationOptions = {
 	 * Application mode
 	 */
 	appMode?: AppMode;
+
+	/**
+	 * Custom error handler
+	 */
+	onValidationError?: (error: ZodError) => void;
 };
 
 class EnvValidator {
@@ -55,6 +60,7 @@ class EnvValidator {
 			servicePrefix: "",
 			debug: false,
 			appMode: process.env.APP_MODE as AppMode,
+			onValidationError: this.defaultErrorHandler,
 			...options,
 		};
 
@@ -68,6 +74,15 @@ class EnvValidator {
 
 		// Immediate validation
 		this.validate();
+	}
+
+	private defaultErrorHandler(error: ZodError): void {
+		const errorMessages = error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join("\n");
+
+		logger.error(`Environment validation error: ${errorMessages}`);
+		this.debugLog("Full error", error.errors);
+
+		process.exit(1);
 	}
 
 	/**
@@ -84,7 +99,7 @@ class EnvValidator {
 		const result = this.baseSchema.safeParse(envVars);
 
 		if (!result.success) {
-			this.handleValidationError(result.error);
+			this.options.onValidationError(result.error);
 		}
 
 		// Update environment
@@ -144,18 +159,6 @@ class EnvValidator {
 		}
 
 		return envVars;
-	}
-
-	/**
-	 * Handle validation errors
-	 */
-	private handleValidationError(error: ZodError): never {
-		const errorMessages = error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join("\n");
-
-		logger.error(`Environment validation error: ${errorMessages}`);
-		this.debugLog("Full error", error.errors);
-
-		process.exit(1);
 	}
 
 	/**
