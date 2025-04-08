@@ -26,6 +26,7 @@
 			"outputs": []
 		},
 		"test": {
+			"cache": false,
 			"inputs": ["{src,tests}/**/*.{js,ts,tsx}"],
 			"outputs": ["coverage/**"]
 		},

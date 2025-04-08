@@ -16,11 +16,7 @@ export type Logger = pino.Logger & {
 };
 
 // Create a base log object with metadata
-const createBaseLogObject = (
-	config: CustomLoggerConfig,
-	level: string,
-	msg: string
-) => ({
+const createBaseLogObject = (config: CustomLoggerConfig, level: string, msg: string) => ({
 	level: level.toUpperCase(),
 	service: config.serviceName,
 	environment: config.environment,
@@ -66,7 +62,10 @@ export const createLogger = (
 		}) as Logger;
 	} catch (error) {
 		// Log configuration error
-		console.error("Logger configuration error:", error instanceof Error ? error.message : String(error));
+		console.error(
+			"Logger configuration error:",
+			error instanceof Error ? error.message : String(error),
+		);
 
 		// Create fallback logger
 		const fallbackLogger = pino({
@@ -82,11 +81,7 @@ export const createLogger = (
 			get(target, prop) {
 				if (prop === "info" || prop === "error" || prop === "warn" || prop === "debug") {
 					return (msg: string) => {
-						const logObject = createBaseLogObject(
-							defaultLoggerConfig,
-							prop as string,
-							msg
-						);
+						const logObject = createBaseLogObject(defaultLoggerConfig, prop as string, msg);
 						(target as any)[prop](logObject);
 						return JSON.stringify(logObject);
 					};

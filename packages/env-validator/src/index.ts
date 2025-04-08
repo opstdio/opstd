@@ -8,12 +8,6 @@ import { createLogger } from "@opstd/logger";
 import { BaseSchema, type NodeEnv, type AppMode } from "./schemas/base";
 export { DatabaseSchema } from "./schemas/database";
 
-const logger = createLogger({
-	serviceName: "env-validator",
-	environment: process.env.NODE_ENV || "development",
-	logLevel: "info",
-});
-
 type EnvValidationOptions = {
 	/**
 	 * Custom path for .env file
@@ -44,46 +38,60 @@ type EnvValidationOptions = {
 class EnvValidator {
 	private baseSchema: ZodObject<ZodRawShape>;
 	private options: Required<EnvValidationOptions>;
+	private logger;
 	private validatedEnv!: TypeOf<ZodObject<ZodRawShape>>;
 
 	constructor(
 		schema: ZodObject<ZodRawShape> | undefined = undefined,
 		options: EnvValidationOptions = {},
 	) {
-		// Set default APP_MODE
-		const defaultAppMode: AppMode = "development";
-		process.env.APP_MODE = process.env.APP_MODE || options.appMode || defaultAppMode;
-
-		// Prepare options
+		// Initialize options
 		this.options = {
 			envPath: path.resolve(process.cwd(), ".env"),
 			servicePrefix: "",
 			debug: false,
-			appMode: process.env.APP_MODE as AppMode,
-			onValidationError: this.defaultErrorHandler,
+			appMode: "development",
+			onValidationError: this.defaultErrorHandler.bind(this),
 			...options,
 		};
 
-		this.baseSchema = schema ? BaseSchema.merge(schema) : BaseSchema;
+		// Initialize logger with default environment
+		const nodeEnv = process.env.NODE_ENV?.toLowerCase();
+		const validNodeEnv = (nodeEnv === "development" || nodeEnv === "production" || nodeEnv === "test")
+			? nodeEnv
+			: "development";
 
-		// Debug logging
-		this.debugLog("Initial configuration:", {
-			processAppMode: process.env.APP_MODE,
-			optionsAppMode: this.options.appMode,
+		this.logger = createLogger({
+			serviceName: "env-validator",
+			environment: validNodeEnv,
+			logLevel: this.options.debug ? "debug" : "info",
+			prettyPrint: true,
+			enableSourceLocation: true,
 		});
 
-		// Immediate validation
+		// Debug logging for initial state
+		this.debugLog("Initial environment state:", process.env);
+
+		// Load environment files first
+		this.loadEnvFiles();
+
+		// Merge schemas - base schema takes precedence for core env vars
+		this.baseSchema = schema
+			? schema.merge(BaseSchema)
+			: BaseSchema;
+
+		// Validate environment
 		this.validate();
 	}
 
-	private defaultErrorHandler(error: ZodError): void {
+	private defaultErrorHandler = (error: ZodError): void => {
 		const errorMessages = error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join("\n");
 
-		logger.error(`Environment validation error: ${errorMessages}`);
+		this.logger.error(`Environment validation error: ${errorMessages}`);
 		this.debugLog("Full error", error.errors);
 
-		process.exit(1);
-	}
+		throw error;
+	};
 
 	/**
 	 * Validate environment variables
@@ -99,13 +107,31 @@ class EnvValidator {
 		const result = this.baseSchema.safeParse(envVars);
 
 		if (!result.success) {
-			this.options.onValidationError(result.error);
+			this.debugLog("Validation failed:", result.error);
+			
+			// Handle validation error
+			if (typeof this.options.onValidationError === "function") {
+				this.options.onValidationError(result.error);
+				// Allow custom error handler to determine flow
+				return {} as z.infer<typeof this.baseSchema>;
+			} else {
+				this.defaultErrorHandler(result.error);
+				// Default error handler throws, so this won't be reached
+				return {} as z.infer<typeof this.baseSchema>;
+			}
 		}
 
-		// Update environment
-		this.validatedEnv = result.data as z.infer<typeof this.baseSchema>;
-		Object.assign(process.env, this.validatedEnv);
+		// Update environment with validated data
+		this.validatedEnv = result.data;
+		
+		// Update process.env with validated values
+		Object.entries(this.validatedEnv).forEach(([key, value]) => {
+			if (value !== undefined) {
+				process.env[key] = String(value);
+			}
+		});
 
+		this.debugLog("Validation successful:", this.validatedEnv);
 		return this.validatedEnv;
 	}
 
@@ -120,45 +146,97 @@ class EnvValidator {
 	}
 
 	/**
-	 * Dynamic .env file loading
+	 * Dynamic .env file loading with proper precedence
 	 */
 	private loadEnvFiles(): void {
-		const { envPath, appMode } = this.options;
-		const envFiles = [`.env.${appMode}`, `.env.${appMode}.local`, ".env.local", ".env"];
+		const { envPath } = this.options;
+		const currentMode = process.env.APP_MODE?.toLowerCase() || "development";
+		const nodeEnv = process.env.NODE_ENV?.toLowerCase() || "development";
 
-		for (const file of envFiles) {
+		// Define file loading order (later files take precedence)
+		const envFiles = [
+			".env",                    // Base defaults
+			`.env.${nodeEnv}`,        // Environment-specific (e.g. .env.test)
+			`.env.${currentMode}`,    // Mode-specific (e.g. .env.production)
+			".env.local",             // Local overrides
+			`.env.${nodeEnv}.local`,  // Environment-specific local overrides
+			`.env.${currentMode}.local`, // Mode-specific local overrides
+		];
+
+		this.debugLog("Loading env files in order:", envFiles);
+
+		// Load files in reverse order so later files take precedence
+		for (const file of envFiles.reverse()) {
 			const filePath = path.resolve(path.dirname(envPath), file);
 
 			if (fs.existsSync(filePath)) {
 				this.debugLog(`Loading env file: ${filePath}`);
-				dotenv.config({ path: filePath });
+				const result = dotenv.config({ path: filePath, override: true });
+				if (result.error) {
+					this.logger.warn(`Error loading ${file}:`, result.error);
+				} else {
+					this.debugLog(`Loaded env file: ${file}`);
+				}
+			} else {
+				this.debugLog(`Env file not found: ${file}`);
 			}
 		}
+
+		// Log final environment state after loading all files
+		this.debugLog("Environment after loading files:", {
+			NODE_ENV: process.env.NODE_ENV,
+			APP_MODE: process.env.APP_MODE,
+		});
 	}
 
 	/**
-	 * Prepare environment variables
+	 * Prepare environment variables with improved prefix handling
 	 */
 	private prepareEnvVars(): Record<string, string> {
-		const { servicePrefix, appMode } = this.options;
-		const envVars: Record<string, string> = {
-			NODE_ENV: (process.env.NODE_ENV ?? "development").toLowerCase(),
-			APP_MODE: (process.env.APP_MODE ?? appMode ?? "development").toLowerCase(),
-		};
+		const { servicePrefix } = this.options;
+		const envVars: Record<string, string> = {};
 
-		// Handle variables with specific prefix
+		this.debugLog("Initial process.env:", process.env);
+
+		// First collect all environment variables
 		for (const [key, value] of Object.entries(process.env)) {
-			const normalizedKey = key.toUpperCase();
+			if (!value) continue;
 
-			if (servicePrefix && key.startsWith(servicePrefix)) {
-				const cleanKey = normalizedKey.replace(servicePrefix.toUpperCase(), "");
-				envVars[cleanKey] = value || "";
-			} else if (!servicePrefix) {
-				envVars[normalizedKey] = value || "";
+			const upperKey = key.toUpperCase();
+			let finalKey = upperKey;
+			let finalValue = value.trim();
+
+			// Handle prefixed variables
+			if (servicePrefix && upperKey.startsWith(servicePrefix.toUpperCase())) {
+				finalKey = upperKey.slice(servicePrefix.toUpperCase().length);
+				this.debugLog(`Processing prefixed var: ${key} -> ${finalKey}`);
 			}
+
+			// Special case handling
+			if (finalKey === "NODE_ENV" || finalKey === "APP_MODE") {
+				finalValue = finalValue.toLowerCase();
+			} else if (finalKey === "APP_NAME") {
+				finalValue = "OPSTD.io"; // Ensure consistent casing
+			}
+
+			// Store the value
+			envVars[finalKey] = finalValue;
 		}
 
+		// Set defaults if not present
+		if (!envVars.NODE_ENV) envVars.NODE_ENV = "development";
+		if (!envVars.APP_MODE) envVars.APP_MODE = "development";
+		if (!envVars.APP_NAME) envVars.APP_NAME = "OPSTD.io";
+
+		this.debugLog("Final prepared env vars:", envVars);
 		return envVars;
+	}
+
+	/**
+	 * Normalize environment variable value with fallback and type safety
+	 */
+	private normalizeEnvValue(value: string | undefined, fallback: string): string {
+		return (value ?? fallback).toLowerCase().trim();
 	}
 
 	/**
@@ -166,7 +244,7 @@ class EnvValidator {
 	 */
 	private debugLog(message: string, ...args: unknown[]): void {
 		if (this.options.debug) {
-			logger.debug(`[EnvValidator Debug] ${message}`, ...args);
+			this.logger.debug(`[EnvValidator Debug] ${message}`, ...args);
 		}
 	}
 
@@ -174,14 +252,14 @@ class EnvValidator {
 	 * Utility to get current mode
 	 */
 	getAppMode(): AppMode {
-		return this.options.appMode;
+		return this.validatedEnv.APP_MODE;
 	}
 
 	/**
 	 * Check specific mode
 	 */
 	isAppMode(mode: AppMode): boolean {
-		return this.options.appMode === mode;
+		return this.validatedEnv.APP_MODE === mode;
 	}
 }
 

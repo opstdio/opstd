@@ -3,15 +3,24 @@ import { z } from "zod";
 import { EnvValidator } from "./index";
 
 describe("EnvValidator", () => {
-	const originalEnv = { ...process.env };
-
 	beforeEach(() => {
-		// Reset process.env before each test
-		process.env = { ...originalEnv };
+		// Clear all environment variables we might modify
+		const keysToDelete = Object.keys(process.env).filter(key =>
+			['NODE_ENV', 'APP_MODE', 'APP_NAME', 'DATABASE_URL'].includes(key) ||
+			key.startsWith('SERVICE_')
+		);
+		keysToDelete.forEach(key => delete process.env[key]);
+
+		// Set test defaults
+		process.env.NODE_ENV = 'development';
+		process.env.APP_MODE = 'development';
+		process.env.APP_NAME = 'OPSTD.io';
 	});
 
 	it("should validate default environment variables", () => {
-		const validator = new EnvValidator();
+		const validator = new EnvValidator(undefined, {
+			debug: true,
+		});
 
 		expect(validator.env.NODE_ENV).toBe("development");
 		expect(validator.env.APP_MODE).toBe("development");
@@ -53,9 +62,13 @@ describe("EnvValidator", () => {
 	});
 
 	it("should support service-specific environment variable prefixes", () => {
+		const CustomSchema = z.object({
+			DATABASE_URL: z.string().url(),
+		});
+
 		process.env.SERVICE_DATABASE_URL = "https://example.com/service-db";
 
-		const validator = new EnvValidator(undefined, {
+		const validator = new EnvValidator(CustomSchema, {
 			servicePrefix: "SERVICE_",
 		});
 
