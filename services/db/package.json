@@ -28,6 +28,7 @@
 	"packageManager": "pnpm@10.4.1",
 	"dependencies": {
 		"@opstd/env-validator": "workspace:*",
+		"@opstd/logger": "workspace:*",
 		"drizzle-orm": "^0.41.0",
 		"pg": "^8.14.1"
 	},

@@ -314,6 +314,9 @@ importers:
       '@opstd/env-validator':
         specifier: workspace:*
         version: link:../../packages/env-validator
+      '@opstd/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
       drizzle-orm:
         specifier: ^0.41.0
         version: 0.41.0(@types/pg@8.11.11)(gel@2.0.1)(kysely@0.27.6)(pg@8.14.1)(postgres@3.4.5)

@@ -5,16 +5,17 @@ import { EnvValidator } from "./index";
 describe("EnvValidator", () => {
 	beforeEach(() => {
 		// Clear all environment variables we might modify
-		const keysToDelete = Object.keys(process.env).filter(key =>
-			['NODE_ENV', 'APP_MODE', 'APP_NAME', 'DATABASE_URL'].includes(key) ||
-			key.startsWith('SERVICE_')
+		const keysToDelete = Object.keys(process.env).filter(
+			(key) =>
+				["NODE_ENV", "APP_MODE", "APP_NAME", "DATABASE_URL"].includes(key) ||
+				key.startsWith("SERVICE_"),
 		);
-		keysToDelete.forEach(key => delete process.env[key]);
+		keysToDelete.forEach((key) => delete process.env[key]);
 
 		// Set test defaults
-		process.env.NODE_ENV = 'development';
-		process.env.APP_MODE = 'development';
-		process.env.APP_NAME = 'OPSTD.io';
+		process.env.NODE_ENV = "development";
+		process.env.APP_MODE = "development";
+		process.env.APP_NAME = "OPSTD.io";
 	});
 
 	it("should validate default environment variables", () => {

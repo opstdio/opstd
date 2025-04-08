@@ -57,9 +57,10 @@ class EnvValidator {
 
 		// Initialize logger with default environment
 		const nodeEnv = process.env.NODE_ENV?.toLowerCase();
-		const validNodeEnv = (nodeEnv === "development" || nodeEnv === "production" || nodeEnv === "test")
-			? nodeEnv
-			: "development";
+		const validNodeEnv =
+			nodeEnv === "development" || nodeEnv === "production" || nodeEnv === "test"
+				? nodeEnv
+				: "development";
 
 		this.logger = createLogger({
 			serviceName: "env-validator",
@@ -76,9 +77,7 @@ class EnvValidator {
 		this.loadEnvFiles();
 
 		// Merge schemas - base schema takes precedence for core env vars
-		this.baseSchema = schema
-			? schema.merge(BaseSchema)
-			: BaseSchema;
+		this.baseSchema = schema ? schema.merge(BaseSchema) : BaseSchema;
 
 		// Validate environment
 		this.validate();
@@ -108,7 +107,7 @@ class EnvValidator {
 
 		if (!result.success) {
 			this.debugLog("Validation failed:", result.error);
-			
+
 			// Handle validation error
 			if (typeof this.options.onValidationError === "function") {
 				this.options.onValidationError(result.error);
@@ -123,7 +122,7 @@ class EnvValidator {
 
 		// Update environment with validated data
 		this.validatedEnv = result.data;
-		
+
 		// Update process.env with validated values
 		Object.entries(this.validatedEnv).forEach(([key, value]) => {
 			if (value !== undefined) {
@@ -155,11 +154,11 @@ class EnvValidator {
 
 		// Define file loading order (later files take precedence)
 		const envFiles = [
-			".env",                    // Base defaults
-			`.env.${nodeEnv}`,        // Environment-specific (e.g. .env.test)
-			`.env.${currentMode}`,    // Mode-specific (e.g. .env.production)
-			".env.local",             // Local overrides
-			`.env.${nodeEnv}.local`,  // Environment-specific local overrides
+			".env", // Base defaults
+			`.env.${nodeEnv}`, // Environment-specific (e.g. .env.test)
+			`.env.${currentMode}`, // Mode-specific (e.g. .env.production)
+			".env.local", // Local overrides
+			`.env.${nodeEnv}.local`, // Environment-specific local overrides
 			`.env.${currentMode}.local`, // Mode-specific local overrides
 		];
 
