@@ -113,22 +113,21 @@ class EnvValidator {
 				this.options.onValidationError(result.error);
 				// Allow custom error handler to determine flow
 				return {} as z.infer<typeof this.baseSchema>;
-			} else {
-				this.defaultErrorHandler(result.error);
-				// Default error handler throws, so this won't be reached
-				return {} as z.infer<typeof this.baseSchema>;
 			}
+			this.defaultErrorHandler(result.error);
+			// Default error handler throws, so this won't be reached
+			return {} as z.infer<typeof this.baseSchema>;
 		}
 
 		// Update environment with validated data
 		this.validatedEnv = result.data;
 
 		// Update process.env with validated values
-		Object.entries(this.validatedEnv).forEach(([key, value]) => {
+		for (const [key, value] of Object.entries(this.validatedEnv)) {
 			if (value !== undefined) {
 				process.env[key] = String(value);
 			}
-		});
+		}
 
 		this.debugLog("Validation successful:", this.validatedEnv);
 		return this.validatedEnv;

@@ -10,7 +10,9 @@ describe("EnvValidator", () => {
 				["NODE_ENV", "APP_MODE", "APP_NAME", "DATABASE_URL"].includes(key) ||
 				key.startsWith("SERVICE_"),
 		);
-		keysToDelete.forEach((key) => delete process.env[key]);
+		for (const key of keysToDelete) {
+			delete process.env[key];
+		}
 
 		// Set test defaults
 		process.env.NODE_ENV = "development";

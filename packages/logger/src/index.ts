@@ -1,11 +1,11 @@
 import pino from "pino";
 import {
 	createLoggerConfig,
-	CustomLoggerConfig,
+	type CustomLoggerConfig,
 	defaultLoggerConfig,
 	LoggerConfigSchema,
 } from "./config";
-import { createTransports, TransportOptions } from "./transports";
+import { createTransports, type TransportOptions } from "./transports";
 
 // Extend Pino Logger type to ensure string return for log methods
 export type Logger = pino.Logger & {
@@ -53,11 +53,11 @@ export const createLogger = (
 				if (prop === "info" || prop === "error" || prop === "warn" || prop === "debug") {
 					return (msg: string) => {
 						const logObject = createBaseLogObject(validatedConfig, prop as string, msg);
-						(target as any)[prop](logObject);
+						(target as pino.Logger)[prop as 'info' | 'error' | 'warn' | 'debug'](logObject);
 						return JSON.stringify(logObject);
 					};
 				}
-				return (target as any)[prop];
+				return (target as pino.Logger)[prop as keyof pino.Logger];
 			},
 		}) as Logger;
 	} catch (error) {
@@ -82,11 +82,11 @@ export const createLogger = (
 				if (prop === "info" || prop === "error" || prop === "warn" || prop === "debug") {
 					return (msg: string) => {
 						const logObject = createBaseLogObject(defaultLoggerConfig, prop as string, msg);
-						(target as any)[prop](logObject);
+						(target as pino.Logger)[prop as 'info' | 'error' | 'warn' | 'debug'](logObject);
 						return JSON.stringify(logObject);
 					};
 				}
-				return (target as any)[prop];
+				return (target as pino.Logger)[prop as keyof pino.Logger];
 			},
 		}) as Logger;
 	}

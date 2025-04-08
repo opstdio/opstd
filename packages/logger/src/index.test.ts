@@ -4,7 +4,7 @@ import type { CustomLoggerConfig } from "./index";
 import { defaultLoggerConfig } from "./config";
 
 // Utility function to safely parse log entry
-function parseLogEntry(logOutput: unknown): Record<string, any> {
+function parseLogEntry(logOutput: unknown): Record<string, unknown> {
 	if (typeof logOutput === "string") {
 		try {
 			return JSON.parse(logOutput);
@@ -106,7 +106,8 @@ describe("Logger Creation", () => {
 		try {
 			// Use type assertion to bypass type checking
 			const logger = createLogger({
-				serviceName: 123 as any,
+				// @ts-expect-error Testing invalid type handling
+				serviceName: 123,
 				environment: "development" as CustomLoggerConfig["environment"],
 			});
 
